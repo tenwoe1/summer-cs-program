@@ -5,7 +5,7 @@
         if (name) {
           alert("Tashi Delek བཀྲ་ཤིས་བདེ་ལེགས།, " + name + "! 👋");
         } else {
-          alert("You've probably got to write a name. probably");
+          alert("You've probably got to write a name. probably.");
         }
       }
     </script>
