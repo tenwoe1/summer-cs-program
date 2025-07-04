@@ -6,5 +6,5 @@
         } else {
           alert("You've probably got to write a name. probably.");
         }
-       #map { height: 400px; width: 50%; margin-top: 30px; }
       }
+#map { height: 400px; width: 50%; margin-top: 30px; }
