@@ -1,34 +1,99 @@
-      // This function runs when the button is clicked
-      function greetUser() {
+// This function runs when the button is clicked
+/*      function greetUser() {
         let name = prompt("What's your name? \n ཁྱེད་རང་གི་མིང་ལ་ག་རེ་རེད།");
         if (name) {
           alert("Tashi Delek བཀྲ་ཤིས་བདེ་ལེགས།, " + name + "! 👋");
         } else {
-          alert("You've probably got to write a name. probably.");
+          alert("You didn't enter a name.");
         }
-    const map = L.map('map').setView([28.3949, 84.1240], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const tracePoints = [
-      [29.653, 91.117],   // Lhasa
-      [27.7172, 85.324],  // Kathmandu
-      [14.9737, 75.0407]    // Mundgod
-    ];
-
-    const pathLine = L.polyline(tracePoints, { color: 'red' }).addTo(map);
-    
-    map.fitBounds(pathLine.getBounds());
-
-    coords: [29.653, 91.117],
-    title: 'Lhasa',
-    content: `<h2>Lhasa</h2>
-                  <p>This is where my grandmother was born. She lived here until she left Tibet in 1959.</p>
-                  <img src="images/lhasa.jpg" alt="Lhasa">`
-
-    L.marker(tracePoints[0]).addTo(map).bindPopup('Lhasa');
-    L.marker(tracePoints[1]).addTo(map).bindPopup('Kathmandu');
-    L.marker(tracePoints[2]).addTo(map).bindPopup('Mundgod');
       }
+      */
+// Initialize the map centered near Yumbhu Lhakhang
+  // Initialize the map centered between Lhoka and Lhasa
+  const map = L.map('map').setView([30.5, 85], 5);
 
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const yumbhulhagang = [29.2333, 91.7667];
+  const buffalo = [42.8869, 78.8789];
+  const dharamsala = [32.2207, 76.3203]; 
+
+
+  const storyPanel = document.getElementById('story-panel');
+
+  // Marker for Yumbhu Lhakhang
+  L.marker(yumbhulhagang).addTo(map)
+    .bindPopup("📍 Lhokha")
+    .on('click', () => {
+      storyPanel.innerHTML = `
+        <h2>📖 Lhokha</h2>
+        <p><strong>Yumbhu Lhakhang</strong> </p>
+      `;
+    });
+
+  // Marker for Lhasa
+  L.marker(lhasa).addTo(map)
+    .bindPopup("📍 Lhasa")
+    .on('click', () => {
+      storyPanel.innerHTML = `
+        <h2>📖 Lhasa</h2>
+        <p><strong>Lhasa</strong></p>
+      `;
+    });
+    // Marker for Dharamsala
+      L.marker(dharamsala).addTo(map)
+        .bindPopup("📍 Dharamshala")
+        .on('click', () => {
+          storyPanel.innerHTML = `
+            <h2>📖 Dharamshala</h2>
+            <p></p>
+          `;
+        });
+  const path = L.polyline([yumbhulhagang, lhasa, dharamsala], {
+    color: 'red',
+    weight: 4
+  }).addTo(map);
+
+  map.fitBounds(path.getBounds(), {
+    paddingTopLeft: [50, 50],
+    paddingBottomRight: [50, 50],
+    maxZoom: 7
+  });
+
+
+// My image slide with captions
+      const slides = document.querySelectorAll('.carousel-slide');
+      let current = 0;
+
+      document.querySelector('.next-btn').addEventListener('click', () => {
+        slides[current].classList.add('hidden');
+        current = (current + 1) % slides.length;
+        slides[current].classList.remove('hidden');
+      });
+
+      document.querySelector('.prev-btn').addEventListener('click', () => {
+        slides[current].classList.add('hidden');
+        current = (current - 1 + slides.length) % slides.length;
+        slides[current].classList.remove('hidden');
+      });
+
+// Three capitals story block
+     const storyBlocks = document.querySelectorAll('.story-block');
+
+    const revealOnScroll = () => {
+      storyBlocks.forEach(block => {
+        const top = block.getBoundingClientRect().top;
+        const bottom = block.getBoundingClientRect().bottom;
+
+        if (top < window.innerHeight * 0.85 && bottom > 0) {
+          block.classList.add('revealed');
+        } else {
+          block.classList.remove('revealed'); // Remove on scroll out
+        }
+      });
+    };
+
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', revealOnScroll);
