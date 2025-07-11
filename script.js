@@ -14,7 +14,7 @@
     const tracePoints = [
       [29.653, 91.117],   // Lhasa
       [27.7172, 85.324],  // Kathmandu
-      [32.219, 76.323]    // Dharamshala
+      [14.9737, 75.0407]    // Mundgod
     ];
 
     const pathLine = L.polyline(tracePoints, { color: 'red' }).addTo(map);
@@ -23,6 +23,6 @@
 
     L.marker(tracePoints[0]).addTo(map).bindPopup('Lhasa');
     L.marker(tracePoints[1]).addTo(map).bindPopup('Kathmandu');
-    L.marker(tracePoints[2]).addTo(map).bindPopup('Dharamshala');
+    L.marker(tracePoints[2]).addTo(map).bindPopup('Mundgod');
       }
 
