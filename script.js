@@ -16,7 +16,7 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  const buffalo = [42.880230, -78.878738];
+  const buffalo = [42.880230, 78.878738];
   const lhasa = [29.6578, 91.1175];
   const dharamsala = [32.2207, 76.3203]; 
 
