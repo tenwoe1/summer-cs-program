@@ -25,7 +25,7 @@
 
   // Marker for Yumbhu Lhakhang
   L.marker(buffalo).addTo(map)
-    .bindPopup("📍 Lhokha")
+    .bindPopup("📍 Buffalo")
     .on('click', () => {
       storyPanel.innerHTML = `
         <h2>📖 Buffalo</h2>
@@ -51,7 +51,7 @@
             <p>After the 1959 uprising in Lhasa, His Holiness the 14th Dalai Lama fled Tibet and found refuge in Dharamsala, India. There, the Tibetan Government-in-Exile was established — not just as a political structure, but as a cultural lifeline. In this Himalayan town, Tibetans rebuilt schools, monasteries, and institutions to preserve their language, religion, and identity. Though far from their homeland, Dharamsala has become the third symbolic capital of Tibet — a place where memory, resilience, and hope continue to thrive. </p>
           `;
         });
-  const path = L.polyline([yumbhulhagang, lhasa, dharamsala], {
+  const path = L.polyline([buffalo, lhasa, dharamsala], {
     color: 'red',
     weight: 4
   }).addTo(map);
