@@ -16,7 +16,7 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  const yumbhulhagang = [29.2333, 91.7667];
+  const buffalo = [42.880230, -78.878738];
   const lhasa = [29.6578, 91.1175];
   const dharamsala = [32.2207, 76.3203]; 
 
@@ -24,11 +24,11 @@
   const storyPanel = document.getElementById('story-panel');
 
   // Marker for Yumbhu Lhakhang
-  L.marker(yumbhulhagang).addTo(map)
+  L.marker(buffalo).addTo(map)
     .bindPopup("📍 Lhokha")
     .on('click', () => {
       storyPanel.innerHTML = `
-        <h2>📖 Lhokha</h2>
+        <h2>📖 Buffalo</h2>
         <p><strong>Yumbhu Lhakhang</strong> is Tibet’s first palace, said to be built for King Nyatri Tsenpo in the 2nd century BCE. It marks the legendary beginning of Tibetan kingship in the Yarlung Valley. Perched on a hill, it later became a shrine and monastery during the reign of the 5th Dalai Lama.</p>
       `;
     });
