@@ -161,7 +161,7 @@ class Player {
   }
 
   display() {
-    image(playerImg, this.x, this.y, 800, 40);
+    image(playerImg, this.x, this.y, 30, 40);
   }
 
   reaches(goal) {
