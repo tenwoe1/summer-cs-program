@@ -4,10 +4,22 @@ let platforms = [];
 let goal;
 let img;
 let playerImg;
+let opacity = 0;  // Start fully invisible
+
+let obstacles = [
+  { x: 210 + 200, y: 533, w: 23, h: 23 },
+  { x: 60 + 290, y: 333, w: 23, h: 23 },
+  { x: 350, y: 100, w: 23, h: 23 }
+];
+
+let score = 0;
+let gameOver = false;
+
+let restartButton;
 
 function preload() {
-  img = loadImage('mountain.gif'); // Background image
-  playerImg = loadImage('dorjee.gif'); // Player character image
+  img = loadImage('Mountain.gif'); // Background image
+  playerImg = loadImage('Dorjee.gif'); // Player character image
 }
 
 function setup() {
@@ -29,8 +41,14 @@ function setup() {
     new Platform(-10, 265, 150, 45),
     new Platform(150, 168, 150, 45),
     new Platform(300, 123, 150, 45),
-    new Platform(450, 80, 260, 45) // Commas now added after every platform
+    new Platform(450, 80, 260, 45)
   ];
+  
+  // Create the restart button but hide it for now
+  restartButton = createButton("Restart");
+  restartButton.position(width / 2 - 40, height / 2 + 20);
+  restartButton.mousePressed(restartGame);
+  restartButton.hide();
 }
 
 function draw() {
@@ -42,6 +60,46 @@ function draw() {
     drawPlayScreen();
   } else if (gameState === "win") {
     drawWinScreen();
+  } else if (gameState === "end") {
+    drawEndScreen();
+  }
+
+  // Only check for collisions if the game is playing
+  if (gameState === "play") {
+    checkCollisions();
+  }
+
+  // Show score
+  fill(0);
+  textSize(14);
+  textAlign(LEFT);
+  text("Collisions: " + score, 10, 20);
+}
+
+function checkCollisions() {
+  // Draw obstacles
+  fill(255, 0, 0, 150);
+  for (let obs of obstacles) {
+    rect(obs.x, obs.y, obs.w, obs.h);
+
+    // Check for collision with player
+    if (
+      player.x + player.w > obs.x &&
+      player.x < obs.x + obs.w &&
+      player.y + player.h > obs.y &&
+      player.y < obs.y + obs.h
+    ) {
+      score++;
+      player.respawn(); // Respawn player
+      break;
+    }
+  }
+
+  // Game Over logic
+  if (score >= 3) {
+    gameOver = true;
+    gameState = "end";
+    restartButton.show(); // Show restart button
   }
 }
 
@@ -85,13 +143,29 @@ function drawWinScreen() {
   text("Click to Restart", width / 2, height / 2 + 40);
 }
 
+function drawEndScreen() {
+  background(200, 50, 50);
+  textAlign(CENTER);
+  fill(255);
+  textSize(32);
+  text("Game Over", width / 2, height / 2);
+  textSize(20);
+}
+
 function mousePressed() {
   if (gameState === "start") {
     gameState = "play";
-  } else if (gameState === "win") {
-    player.respawn();
-    gameState = "start";
+  } else if (gameState === "win" || gameState === "end") {
+    restartGame();
   }
+}
+
+function restartGame() {
+  player.respawn();
+  gameState = "start";
+  score = 0; // Reset score
+  gameOver = false;
+  restartButton.hide();
 }
 
 class Platform {
@@ -161,7 +235,7 @@ class Player {
   }
 
   display() {
-    image(playerImg, this.x, this.y, 30, 40);
+    image(playerImg, this.x, this.y, this.w, this.h);
   }
 
   reaches(goal) {
@@ -170,7 +244,9 @@ class Player {
 }
 
 function keyPressed() {
+  if (gameOver) return; // If the game is over, don't allow input
   if (key === ' ' || keyCode === UP_ARROW) {
     player.jump();
   }
 }
+
