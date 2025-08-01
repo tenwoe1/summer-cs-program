@@ -4,7 +4,8 @@ let platforms = [];
 let goal;
 let img;
 let playerImg;
-let opacity = 0;  // Start fully invisible
+let startScreenImg; 
+let opacity = 0;
 
 let obstacles = [
   { x: 210 + 200, y: 533, w: 23, h: 23 },
@@ -15,11 +16,15 @@ let obstacles = [
 let score = 0;
 let gameOver = false;
 
+let currentLevel = 1;
+const totalLevels = 6;
+
 let restartButton;
 
 function preload() {
-  img = loadImage('Mountain.gif'); // Background image
+  img = loadImage('Mountain.gif'); // Background image for gameplay
   playerImg = loadImage('Dorjee.gif'); // Player character image
+  startScreenImg = loadImage('Sky.gif'); // Your new start screen background image
 }
 
 function setup() {
@@ -52,37 +57,35 @@ function setup() {
 }
 
 function draw() {
-  background(img);
-
   if (gameState === "start") {
     drawStartScreen();
-  } else if (gameState === "play") {
-    drawPlayScreen();
-  } else if (gameState === "win") {
-    drawWinScreen();
-  } else if (gameState === "end") {
-    drawEndScreen();
-  }
+  } else {
+    background(img);
+    if (gameState === "play") {
+      drawPlayScreen();
+    } else if (gameState === "win") {
+      drawWinScreen();
+    } else if (gameState === "end") {
+      drawEndScreen();
+    }
 
-  // Only check for collisions if the game is playing
-  if (gameState === "play") {
-    checkCollisions();
-  }
+    if (gameState === "play") {
+      checkCollisions();
+    }
 
-  // Show score
-  fill(0);
-  textSize(14);
-  textAlign(LEFT);
-  text("Collisions: " + score, 10, 20);
+    fill(225);
+    textSize(28);
+    textAlign(LEFT);
+    text("Lives Wasted: " + score, 10, 20);
+    text("Level: " + currentLevel, 10, 50);
+  }
 }
 
 function checkCollisions() {
-  // Draw obstacles
-  fill(255, 0, 0, 150);
+  fill(255);
   for (let obs of obstacles) {
     rect(obs.x, obs.y, obs.w, obs.h);
 
-    // Check for collision with player
     if (
       player.x + player.w > obs.x &&
       player.x < obs.x + obs.w &&
@@ -90,20 +93,20 @@ function checkCollisions() {
       player.y < obs.y + obs.h
     ) {
       score++;
-      player.respawn(); // Respawn player
+      player.respawn();
       break;
     }
   }
 
-  // Game Over logic
   if (score >= 3) {
     gameOver = true;
     gameState = "end";
-    restartButton.show(); // Show restart button
+    restartButton.show();
   }
 }
 
 function drawStartScreen() {
+  background(startScreenImg); // Use the new image for the start screen
   textAlign(CENTER);
   fill(255);
   textSize(40);
@@ -118,19 +121,14 @@ function drawPlayScreen() {
   player.move();
   player.display();
 
-  // Draw platforms
   for (let p of platforms) {
     p.display();
   }
 
-  // Draw goal
   fill(0, 255, 0);
   rect(goal.x, goal.y, 40, 40);
 
-  // Check win condition
-  if (player.reaches(goal)) {
-    gameState = "win";
-  }
+  checkWin();
 }
 
 function drawWinScreen() {
@@ -138,7 +136,7 @@ function drawWinScreen() {
   textAlign(CENTER);
   fill(255);
   textSize(32);
-  text("🎉 You Reached the Goal! 🎉", width / 2, height / 2);
+  text("🎉 You Completed All Levels! 🎉", width / 2, height / 2);
   textSize(20);
   text("Click to Restart", width / 2, height / 2 + 40);
 }
@@ -162,10 +160,22 @@ function mousePressed() {
 
 function restartGame() {
   player.respawn();
+  currentLevel = 1;
+  score = 0;
   gameState = "start";
-  score = 0; // Reset score
   gameOver = false;
   restartButton.hide();
+}
+
+function checkWin() {
+  if (player.reaches(goal)) {
+    currentLevel++;
+    if (currentLevel > totalLevels) {
+      gameState = "win";
+    } else {
+      player.respawn();
+    }
+  }
 }
 
 class Platform {
@@ -191,6 +201,7 @@ class Player {
     this.ySpeed = 0;
     this.xSpeed = 0;
     this.onGround = false;
+    this.jumpCount = 0;
   }
 
   move() {
@@ -199,12 +210,10 @@ class Player {
     if (keyIsDown(RIGHT_ARROW)) this.xSpeed = 3;
     this.x += this.xSpeed;
 
-    this.ySpeed += 0.8; // Gravity
+    this.ySpeed += 0.8; 
     this.y += this.ySpeed;
-
     this.onGround = false;
 
-    // Collision with platforms
     for (let p of platforms) {
       if (
         this.x + this.w > p.x &&
@@ -216,22 +225,26 @@ class Player {
         this.y = p.y - this.h;
         this.ySpeed = 0;
         this.onGround = true;
+        this.jumpCount = 0;
       }
     }
 
-    // Stay inside canvas
     this.x = constrain(this.x, 0, width - this.w);
     if (this.y > height) this.respawn();
   }
 
   jump() {
-    if (this.onGround) this.ySpeed = -12;
+    if (this.onGround || this.jumpCount < 2) {
+      this.ySpeed = -12;
+      this.jumpCount++;
+    }
   }
 
   respawn() {
     this.x = 65;
     this.y = 620;
     this.ySpeed = 0;
+    this.jumpCount = 0;
   }
 
   display() {
@@ -244,7 +257,7 @@ class Player {
 }
 
 function keyPressed() {
-  if (gameOver) return; // If the game is over, don't allow input
+  if (gameOver) return;
   if (key === ' ' || keyCode === UP_ARROW) {
     player.jump();
   }
