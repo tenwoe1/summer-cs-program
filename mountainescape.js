@@ -5,6 +5,8 @@ let goal;
 let img;
 let playerImg;
 let startScreenImg; 
+let obstacleImg;
+let heartImg;
 let opacity = 0;
 
 let obstacles = [
@@ -24,13 +26,18 @@ let restartButton;
 function preload() {
   img = loadImage('Mountain.gif'); // Background image for gameplay
   playerImg = loadImage('Dorjee.gif'); // Player character image
-  startScreenImg = loadImage('Sky.gif'); // Your new start screen background image
+  startScreenImg = loadImage('Sky.gif'); // startscreen background image
+  obstacleImg = loadImage('Lynx.gif'); //obstacles image
+  heartImg = loadImage('Heart.gif');  //heart shape lives image
 }
 
 function setup() {
   createCanvas(706, 675);
   goal = createVector(630, 30); // Goal position
   player = new Player(65, 620); // Start player position
+  
+    // Use a monospaced font for a more consistent blocky look
+  textFont('Courier');
 
   // Define platforms
   platforms = [
@@ -72,19 +79,23 @@ function draw() {
     if (gameState === "play") {
       checkCollisions();
     }
-
-    fill(225);
-    textSize(28);
+    
+    // Draw hearts for lives
+    for (let i = 0; i < 3 - score; i++) {
+      image(heartImg, -20 + i * 35, -20, 90, 90); // Draw each heart at the top left corner
+    }
+    
+fill(225);
+    textSize(18); // Use a smaller text size for a blockier look
     textAlign(LEFT);
-    text("Lives Wasted: " + score, 10, 20);
     text("Level: " + currentLevel, 10, 50);
   }
 }
 
 function checkCollisions() {
-  fill(255);
   for (let obs of obstacles) {
-    rect(obs.x, obs.y, obs.w, obs.h);
+    // Displaying each obstacle as an image
+    image(obstacleImg, obs.x, obs.y, obs.w, obs.h);
 
     if (
       player.x + player.w > obs.x &&
@@ -97,7 +108,7 @@ function checkCollisions() {
       break;
     }
   }
-
+  
   if (score >= 3) {
     gameOver = true;
     gameState = "end";
@@ -106,14 +117,14 @@ function checkCollisions() {
 }
 
 function drawStartScreen() {
-  background(startScreenImg); // Use the new image for the start screen
+  background(startScreenImg);
   textAlign(CENTER);
-  fill(255);
-  textSize(40);
+  fill(000);
+  textSize(35); // Smaller text size at the start
   text("Journey's Beginning", width / 2, height / 2 - 60);
-  textSize(32);
+  textSize(33);
   text("Land of Snow", width / 2, height / 2 - 10);
-  textSize(20);
+  textSize(22);
   text("Click Anywhere to Start", width / 2, height / 2 + 30);
 }
 
